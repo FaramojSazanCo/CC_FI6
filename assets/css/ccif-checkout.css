@@ -5,79 +5,85 @@
 
 /* --- Base Form Container & Variables --- */
 .ccif-checkout-form {
-    --ccif-bg-color: #f8f9fa; /* Light grey background for the whole area */
-    --ccif-box-bg-color: #ffffff; /* White for content boxes */
-    --ccif-border-color: #dee2e6; /* A subtle border color */
-    --ccif-text-color: #495057; /* A soft, dark grey for text */
-    --ccif-heading-color: #212529; /* A darker grey for headings */
-    --ccif-accent-color: #007bff; /* A standard blue for accents and focus */
-    --ccif-error-color: #dc3545; /* A standard red for errors */
-    --ccif-font-family: 'Vazirmatn', -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* Vazirmatn is a popular Persian font */
+    --ccif-bg-color: #f9f9f9;
+    --ccif-box-bg-color: #ffffff;
+    --ccif-border-color: #e0e0e0;
+    --ccif-text-color: #333;
+    --ccif-heading-color: #111;
+    --ccif-accent-color: #0073aa;
+    --ccif-error-color: #d63638;
+    --ccif-invoice-bg-color: #f0f8ff; /* AliceBlue for a soft, distinct look */
+    --ccif-font-family: 'Vazirmatn', -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
     font-family: var(--ccif-font-family);
-    direction: rtl; /* Set Right-to-Left layout */
+    direction: rtl;
     background-color: var(--ccif-bg-color);
     padding: 20px;
     border-radius: 8px;
 }
 
-/* --- General Box Styling --- */
+/* --- General Box Styling (Card Component) --- */
 .ccif-box {
     background-color: var(--ccif-box-bg-color);
     border: 1px solid var(--ccif-border-color);
     padding: 25px;
     margin-bottom: 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    overflow: hidden; /* Contains floated elements */
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
     clear: both;
+    transition: all 0.3s ease-in-out;
 }
 
 .ccif-box h2 {
-    font-size: 1.25rem; /* 20px equivalent */
+    font-size: 1.3rem;
     color: var(--ccif-heading-color);
-    margin-top: 0;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
+    margin: -25px -25px 20px -25px; /* Extend to edges */
+    padding: 20px 25px;
     border-bottom: 1px solid var(--ccif-border-color);
-    text-align: right; /* Align headings to the right */
+    text-align: right;
+    display: flex;
+    align-items: center;
 }
 
+/* --- Header Icons --- */
+.ccif-box h2::before {
+    display: inline-block;
+    font-size: 1.5rem;
+    margin-left: 12px;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+.ccif-invoice-header::before { content: '🧾'; }
+.ccif-person-info-header::before { content: '👤'; }
+.ccif-address-info-header::before { content: '🚚'; }
+.ccif-order-notes-header::before { content: '📝'; }
+
+
 /* --- Form Row Layout --- */
-/* Ensures form rows inside our boxes behave correctly */
 .ccif-box .form-row {
     padding: 0;
     margin: 0 0 16px;
 }
 
-/* Overriding default WooCommerce floats for RTL */
 .ccif-box .form-row-first,
 .ccif-box .form-row-last {
-    width: 48.5%;
+    width: 48%;
 }
 
-.ccif-box .form-row-first {
-    float: right;
-    clear: right;
-}
-
-.ccif-box .form-row-last {
-    float: left;
-    clear: left;
-}
-
-.ccif-box .form-row-wide {
-    clear: both;
-}
+.ccif-box .form-row-first { float: right; clear: right; }
+.ccif-box .form-row-last { float: left; clear: left; }
+.ccif-box .form-row-wide { clear: both; }
 
 /* --- Base Label Styling --- */
 .ccif-box label {
     display: block;
     margin-bottom: 8px;
-    font-size: 0.9rem; /* 14.4px */
+    font-size: 0.95rem;
     color: var(--ccif-text-color);
-    font-weight: 700; /* Make labels bold */
-    text-align: right; /* Align labels to the right */
+    font-weight: 600;
+    text-align: right;
 }
 
 /* --- Input, Select, and Textarea Styling --- */
@@ -85,16 +91,16 @@
 .ccif-box select,
 .ccif-box textarea {
     width: 100%;
-    padding: 10px 12px;
+    padding: 12px 15px;
     font-size: 1rem;
-    font-family: inherit; /* Inherit the Vazirmatn font */
+    font-family: inherit;
     color: var(--ccif-text-color);
-    background-color: #fff;
+    background-color: #fdfdfd;
     border: 1px solid var(--ccif-border-color);
-    border-radius: 6px;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    box-sizing: border-box; /* Important for consistent sizing */
+    border-radius: 8px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
 }
 
 .ccif-box .input-text:focus,
@@ -102,92 +108,80 @@
 .ccif-box textarea:focus {
     outline: 0;
     border-color: var(--ccif-accent-color);
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+    box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.15);
 }
 
-/* Specific styling for select dropdowns to look consistent */
+/* Custom select arrow */
 .ccif-box select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23495057%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
     background-repeat: no-repeat;
-    background-position: left 12px center;
+    background-position: left 15px center;
     background-size: 10px;
-    padding-left: 30px; /* Make space for the arrow */
+    padding-left: 35px;
 }
 
-/* Adjust checkbox styling */
-.ccif-box .invoice-request-box label {
-    display: inline-flex;
+/* --- Specific Box Styling --- */
+.invoice-request-box {
+    background-color: var(--ccif-invoice-bg-color);
+    border-color: #bde0ff;
+}
+
+.invoice-request-box h2 {
+    background-color: rgba(255,255,255,0.5);
+}
+
+/* Checkbox styling */
+.invoice-request-box .form-row {
+    display: flex;
     align-items: center;
-    cursor: pointer;
-    width: auto; /* Override default label width */
 }
 
-.ccif-box .invoice-request-box input[type="checkbox"] {
-    margin-left: 10px;
-    width: auto; /* Override default input width */
+.invoice-request-box label {
+    margin-bottom: 0;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.invoice-request-box input[type="checkbox"] {
+    width: auto;
+    margin-left: 12px;
+    transform: scale(1.2);
 }
 
 /* --- Custom Required Field Indicator --- */
 
-/* Hide the default WooCommerce asterisk to prevent it from showing */
+/* Hide the default WooCommerce asterisk */
 .ccif-box label .required {
     display: none !important;
 }
 
-/*
- * Add our own indicator. We target both fields that are always required (.validate-required)
- * and fields that become required dynamically via our JS (.ccif-is-required).
- */
+/* Our custom indicator, applied via JS or default WooCommerce class */
 .ccif-box .validate-required label::after,
 .ccif-box .ccif-is-required label::after {
-    content: '•'; /* A simple dot/bullet character */
+    content: '•';
     color: var(--ccif-error-color);
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     line-height: 1;
     font-weight: bold;
-    margin-right: 5px;
+    margin-right: 6px;
     vertical-align: middle;
 }
 
 /* --- Hint Text Styling --- */
 .ccif-hint {
-    font-size: 0.85rem;
-    color: #6c757d; /* A secondary, muted text color */
-    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 10px;
     margin-bottom: 0;
     text-align: right;
+    padding-right: 5px;
 }
 
 /* --- Utility Classes --- */
 .ccif-hidden-field {
     display: none !important;
-}
-
-/* --- Specific Box Styling --- */
-.invoice-request-box {
-    background-color: #e8f5e9; /* Light green */
-    border-color: #a5d6a7; /* A slightly darker green border */
-}
-
-/* --- Header Icons --- */
-.ccif-box h2::before {
-    display: inline-block;
-    font-size: 1.2rem;
-    margin-left: 10px; /* Space between icon and text */
-    vertical-align: -2px;
-}
-
-.ccif-person-info-header::before {
-    content: '👤'; /* User icon */
-}
-
-.ccif-address-info-header::before {
-    content: '🚚'; /* Truck/Shipping icon */
-}
-
-.ccif-order-notes-header::before {
-    content: '📝'; /* Notes icon */
 }

@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class CCIF_Iran_Checkout_Rebuild {
 
+    private $fields = [];
     private $order_notes_field = [];
     private $custom_billing_fields = [
         'billing_person_type',
@@ -28,8 +29,13 @@ class CCIF_Iran_Checkout_Rebuild {
         // Add custom validation
         add_action( 'woocommerce_checkout_process', [ $this, 'validate_custom_fields' ] );
 
-        // Modify checkout fields
+        // Modify checkout fields (stores them in a property)
         add_filter( 'woocommerce_checkout_fields', [ $this, 'modify_checkout_fields' ] );
+
+        // Override the billing form with our custom template
+        remove_action( 'woocommerce_checkout_billing', [ WC()->checkout(), 'checkout_form_billing' ] );
+        add_action( 'woocommerce_checkout_billing', [ $this, 'override_billing_form' ] );
+
 
         // Hook into checkout fields to manage them
         add_filter( 'woocommerce_checkout_fields', [ $this, 'move_order_notes_field' ] );
@@ -49,8 +55,6 @@ class CCIF_Iran_Checkout_Rebuild {
         // Enqueue scripts and styles
         add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 
-        // The new approach will use a template override, so all old layout hooks are removed.
-        // We will add the template override filter later.
     }
 
     public function validate_custom_fields() {
@@ -250,21 +254,43 @@ class CCIF_Iran_Checkout_Rebuild {
         unset($fields['billing']['billing_company']);
         unset($fields['billing']['billing_address_2']);
 
-        // --- 5. Reorder All Billing Fields ---
+        // --- 5. Reorder and Store ---
         uasort($fields['billing'], 'wc_checkout_fields_uasort_comparison');
+
+        // Store the modified fields in our class property for the template.
+        $this->fields = $fields;
+
+        // --- 6. Critical Step: Unset billing fields to prevent auto-rendering ---
+        // We will render them manually in our template.
+        $fields['billing'] = [];
 
         return $fields;
     }
 
-    public function enqueue_assets() {
-        if ( ! is_checkout() ) return;
-        wp_enqueue_script( 'ccif-checkout-js', plugin_dir_url( __FILE__ ) . 'assets/js/ccif-checkout.js', ['jquery'], '6.0', true );
-        wp_localize_script( 'ccif-checkout-js', 'ccifData', [ 'cities' => $this->load_iran_data()['cities'] ] );
-        wp_enqueue_style( 'ccif-checkout-css', plugin_dir_url( __FILE__ ) . 'assets/css/ccif-checkout.css', [], '6.0' );
+    public function override_billing_form( $checkout ) {
+        // This is our new function to render the form via a template.
+        $fields = $this->fields; // Get the fields we stored earlier.
+
+        // Make the fields available to the template file.
+        // We pass both the main checkout object and our custom fields array.
+        wc_get_template(
+            'ccif-checkout-form-template.php',
+            [
+                'checkout' => $checkout,
+                'fields'   => $fields['billing'], // Pass only the billing fields.
+                'order_notes' => $this->order_notes_field // Pass order notes field
+            ],
+            '', // template path
+            plugin_dir_path( __FILE__ ) . 'templates/' // base path
+        );
     }
 
-    // All old layout functions are removed. The layout will be handled by a template override.
-
+    public function enqueue_assets() {
+        if ( ! is_checkout() ) return;
+        wp_enqueue_script( 'ccif-checkout-js', plugin_dir_url( __FILE__ ) . 'assets/js/ccif-checkout.js', ['jquery'], '7.0', true );
+        wp_localize_script( 'ccif-checkout-js', 'ccifData', [ 'cities' => $this->load_iran_data()['cities'] ] );
+        wp_enqueue_style( 'ccif-checkout-css', plugin_dir_url( __FILE__ ) . 'assets/css/ccif-checkout.css', [], '7.0' );
+    }
 
     private function log_message( $message ) {
         if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
