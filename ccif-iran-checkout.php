@@ -32,10 +32,8 @@ class CCIF_Iran_Checkout_Rebuild {
         // Modify checkout fields (stores them in a property)
         add_filter( 'woocommerce_checkout_fields', [ $this, 'modify_checkout_fields' ] );
 
-        // Override the billing form with our custom template
-        remove_action( 'woocommerce_checkout_billing', [ WC()->checkout(), 'checkout_form_billing' ] );
-        add_action( 'woocommerce_checkout_billing', [ $this, 'override_billing_form' ] );
-
+        // Setup the form override at the right time
+        add_action( 'wp', [ $this, 'setup_checkout_form_override' ] );
 
         // Hook into checkout fields to manage them
         add_filter( 'woocommerce_checkout_fields', [ $this, 'move_order_notes_field' ] );
@@ -265,6 +263,15 @@ class CCIF_Iran_Checkout_Rebuild {
         $fields['billing'] = [];
 
         return $fields;
+    }
+
+    public function setup_checkout_form_override() {
+        // We hook into 'wp' to ensure all plugins, including WooCommerce, are loaded.
+        // We also check if we are on the checkout page.
+        if ( is_checkout() ) {
+            remove_action( 'woocommerce_checkout_billing', [ WC()->checkout(), 'checkout_form_billing' ] );
+            add_action( 'woocommerce_checkout_billing', [ $this, 'override_billing_form' ] );
+        }
     }
 
     public function override_billing_form( $checkout ) {
