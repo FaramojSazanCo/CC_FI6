@@ -50,7 +50,19 @@ class CCIF_Iran_Checkout_Rebuild {
         add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 
         // The new approach will use a template override, so all old layout hooks are removed.
-        // We will add the template override filter later.
+        add_filter( 'wc_get_template', [ $this, 'override_checkout_template' ], 20, 5 );
+    }
+
+    public function override_checkout_template( $template, $template_name, $args, $template_path, $default_path ) {
+        // We only override the main checkout form template on the checkout page.
+        if ( is_checkout() && ! is_wc_endpoint_url( 'order-pay' ) && ! is_wc_endpoint_url( 'order-received' ) ) {
+            if ( 'checkout/form-checkout.php' === $template_name ) {
+                // Point to the new template file inside our plugin directory.
+                $custom_template = plugin_dir_path( __FILE__ ) . 'templates/form-checkout.php';
+                return $custom_template;
+            }
+        }
+        return $template;
     }
 
     public function validate_custom_fields() {
