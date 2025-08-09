@@ -1,10 +1,10 @@
 /*
- * CCIF Iran Checkout - Custom Styles
- * Version: 7.0
+ * CCIF Iran Checkout - Custom Styles (Safe, JS-driven approach)
+ * Version: 8.0
  */
 
 /* --- Base Form Container & Variables --- */
-.ccif-checkout-form {
+#ccif-custom-cards-wrapper {
     --ccif-bg-color: #f9f9f9;
     --ccif-box-bg-color: #ffffff;
     --ccif-border-color: #e0e0e0;
@@ -17,9 +17,7 @@
 
     font-family: var(--ccif-font-family);
     direction: rtl;
-    background-color: var(--ccif-bg-color);
-    padding: 20px;
-    border-radius: 8px;
+    margin-bottom: 2em;
 }
 
 /* --- General Box Styling (Card Component) --- */
@@ -30,9 +28,8 @@
     margin-bottom: 25px;
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
-    overflow: hidden;
+    overflow: visible; /* Changed to visible for potential dropdown overflows */
     clear: both;
-    transition: all 0.3s ease-in-out;
 }
 
 .ccif-box h2 {
@@ -67,60 +64,27 @@
     margin: 0 0 16px;
 }
 
-.ccif-box .form-row-first,
-.ccif-box .form-row-last {
-    width: 48%;
+/* Overriding default WooCommerce floats for RTL */
+.ccif-box .form-row-first {
+    float: right;
+    clear: right;
+    width: 48.5%;
 }
 
-.ccif-box .form-row-first { float: right; clear: right; }
-.ccif-box .form-row-last { float: left; clear: left; }
-.ccif-box .form-row-wide { clear: both; }
+.ccif-box .form-row-last {
+    float: left;
+    clear: left;
+    width: 48.5%;
+}
+
+.ccif-box .form-row-wide {
+    clear: both;
+}
 
 /* --- Base Label Styling --- */
 .ccif-box label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 0.95rem;
-    color: var(--ccif-text-color);
     font-weight: 600;
     text-align: right;
-}
-
-/* --- Input, Select, and Textarea Styling --- */
-.ccif-box .input-text,
-.ccif-box select,
-.ccif-box textarea {
-    width: 100%;
-    padding: 12px 15px;
-    font-size: 1rem;
-    font-family: inherit;
-    color: var(--ccif-text-color);
-    background-color: #fdfdfd;
-    border: 1px solid var(--ccif-border-color);
-    border-radius: 8px;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    box-sizing: border-box;
-}
-
-.ccif-box .input-text:focus,
-.ccif-box select:focus,
-.ccif-box textarea:focus {
-    outline: 0;
-    border-color: var(--ccif-accent-color);
-    box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.15);
-}
-
-/* Custom select arrow */
-.ccif-box select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
-    background-repeat: no-repeat;
-    background-position: left 15px center;
-    background-size: 10px;
-    padding-left: 35px;
 }
 
 /* --- Specific Box Styling --- */
@@ -134,22 +98,25 @@
 }
 
 /* Checkbox styling */
-.invoice-request-box .form-row {
+#billing_invoice_request_field {
     display: flex;
     align-items: center;
+    border: none;
+    padding: 10px 0;
 }
 
-.invoice-request-box label {
+#billing_invoice_request_field label {
     margin-bottom: 0;
     cursor: pointer;
     font-size: 1.1rem;
     font-weight: 700;
+    order: 2; /* Puts label after checkbox */
 }
 
-.invoice-request-box input[type="checkbox"] {
-    width: auto;
+#billing_invoice_request_field .input-checkbox {
     margin-left: 12px;
     transform: scale(1.2);
+    order: 1; /* Puts checkbox before label */
 }
 
 /* --- Custom Required Field Indicator --- */
@@ -159,9 +126,9 @@
     display: none !important;
 }
 
-/* Our custom indicator, applied via JS or default WooCommerce class */
-.ccif-box .validate-required label::after,
-.ccif-box .ccif-is-required label::after {
+/* Our custom indicator, applied via JS */
+.ccif-box .ccif-is-required label::after,
+.ccif-box .validate-required label::after { /* Also style default required fields */
     content: '•';
     color: var(--ccif-error-color);
     font-size: 1.8rem;
